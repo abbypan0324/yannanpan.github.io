@@ -1,5 +1,5 @@
 ---
-title: "About Me"
+title: "About me"
 ---
 
-Why I am awesome. 
+I am a statistics master's student at the University of Minnesota.

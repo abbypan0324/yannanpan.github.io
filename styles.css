@@ -1,3 +1,9 @@
 blockquote {
   font-style: italic
 }
+
+imag{
+    width: 200px;
+    display: block;
+    margin: 0 auto;
+}

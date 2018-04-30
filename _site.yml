@@ -4,8 +4,10 @@ navbar:
   title: "Yannan's Website"
   left:
     - text: "Home"
+      icon: fa-home
       href: index.html
     - text: "About Me"
+      icon: fa-info
       href: about.html
 
 output:
