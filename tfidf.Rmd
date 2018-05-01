@@ -8,7 +8,7 @@ author: "Yannan Pan, 04/30/2018"
 
 When it comes to natural language processing, or NLP for short, word embedding is the key. Since most models are incapable of processing strings, we need to convert plain strings into numbers and this mapping of text is defined as word embedding.
 
-[Bag-of-words](https://en.wikipedia.org/wiki/Bag-of-words_model) and [Tf-Idf](https://en.wikipedia.org/wiki/Tf–idf) are two popular choices of word embedding. Both of them are based on the occurrence of words. Bag-of-words creates a document term matrix which stores how many times a word appears in each document. Tf-Idf is slightly different, as it will adjust for the fact that some words appear more frequently in the corpus. The words that appear frequently are less helpful in distinguishing different documents, so we should assign less weights to them.
+[Bag-of-words](https://en.wikipedia.org/wiki/Bag-of-words_model) and [Tf-Idf](https://en.wikipedia.org/wiki/Tf–idf) are two popular choices of word embedding. Both of them are based on the occurrence of words. Bag-of-words creates a document term matrix which stores how many times a word appears in each document. Tf-Idf is slightly different, as it will adjust for the fact that some words appear more frequently in the corpus. The words that appear frequently are less helpful in distinguishing documents, so we should assign less weights to them.
 
 Tf-Idf is defined as the product of term frequency and inverse document frequency. Term frequency denotes the frequency of each word in each document, i.e.
 \[tf = f_{t,d}\]
@@ -61,13 +61,24 @@ dtm = create_dtm(it, vectorizer)
 
 We can get the following document term matrix:
 
-document | too | oranges | apples | i | love
----------|-----|---------|--------|---|-----
-1        |     |         |    1   | 1 |  1  
-2        |  1  |         |    1   | 1 |  1  
+document | too | apples | i | love
+---------|-----|--------|---|-----
+1        |     |    1   | 1 |  1  
+2        |  1  |    1   | 1 |  1  
 
 Then we can define a Tf-Idf model. By default, text2vec sets *smooth_idf=TRUE* so as to prevent a division-by-zero, that is adding 1 to the document frequency: 
 \[smooth\_idf = \log(\frac{N}{n_t + 1})\]
+
+```{r, echo=FALSE}
+TfIdf$private_methods$get_idf = function(x) {
+    cs = colSums( abs(sign(x) ) )
+    if (private$smooth_idf)
+        idf = log(nrow(x) / (cs + 1))
+    else
+        idf = log(nrow(x) / (cs))
+    Diagonal(x = idf)
+}
+```
 
 ```{r}
 # Tf-Idf weights
@@ -86,7 +97,7 @@ Tf-Idf decreases the weight for common words and increases the weight for rare w
 
 ## 3. Cosine similarity
 
-With Tf-Idf weight matrix, we can then measure cosine similarities between documents.
+With Tf-Idf weight matrix, we can then measure cosine similarities between sentences.
 
 ```{r}
 tfidf_cos_sim = sim2(dtm_tfidf, method="cosine", norm="l2")
@@ -113,7 +124,7 @@ TfIdf$private_methods$get_idf = function(x) {
 }
 ```
 
-Using this new Idf function, we can compute the cosine similarity again.
+Using this new Idf function, let us compute the cosine similarity again.
 
 ```{r}
 tfidf = TfIdf$new(smooth_idf = TRUE)

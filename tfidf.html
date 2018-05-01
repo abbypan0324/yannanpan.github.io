@@ -225,7 +225,7 @@ $(document).ready(function () {
 <div id="what-is-tf-idf" class="section level1">
 <h1>What is Tf-Idf?</h1>
 <p>When it comes to natural language processing, or NLP for short, word embedding is the key. Since most models are incapable of processing strings, we need to convert plain strings into numbers and this mapping of text is defined as word embedding.</p>
-<p><a href="https://en.wikipedia.org/wiki/Bag-of-words_model">Bag-of-words</a> and <a href="https://en.wikipedia.org/wiki/Tf–idf">Tf-Idf</a> are two popular choices of word embedding. Both of them are based on the occurrence of words. Bag-of-words creates a document term matrix which stores how many times a word appears in each document. Tf-Idf is slightly different, as it will adjust for the fact that some words appear more frequently in the corpus. The words that appear frequently are less helpful in distinguishing different documents, so we should assign less weights to them.</p>
+<p><a href="https://en.wikipedia.org/wiki/Bag-of-words_model">Bag-of-words</a> and <a href="https://en.wikipedia.org/wiki/Tf–idf">Tf-Idf</a> are two popular choices of word embedding. Both of them are based on the occurrence of words. Bag-of-words creates a document term matrix which stores how many times a word appears in each document. Tf-Idf is slightly different, as it will adjust for the fact that some words appear more frequently in the corpus. The words that appear frequently are less helpful in distinguishing documents, so we should assign less weights to them.</p>
 <p>Tf-Idf is defined as the product of term frequency and inverse document frequency. Term frequency denotes the frequency of each word in each document, i.e. <span class="math display">\[tf = f_{t,d}\]</span> <span class="math inline">\(f_{t,d}\)</span> denotes how many times term <span class="math inline">\(t\)</span> appears in document <span class="math inline">\(t\)</span>, which can be found in the document term matrix. Inverse document frequency is defined as follows: <span class="math display">\[idf = \log(\frac{N}{n_t})\]</span> where <span class="math inline">\(N\)</span> denotes the number of documents and <span class="math inline">\(n_t\)</span> denotes how many documents contain term <span class="math inline">\(t\)</span>.</p>
 </div>
 <div id="how-to-measure-text-similarity-using-tf-idf" class="section level1">
@@ -269,7 +269,6 @@ dtm = create_dtm(it, vectorizer)</code></pre>
 <tr class="header">
 <th>document</th>
 <th>too</th>
-<th>oranges</th>
 <th>apples</th>
 <th>i</th>
 <th>love</th>
@@ -279,7 +278,6 @@ dtm = create_dtm(it, vectorizer)</code></pre>
 <tr class="odd">
 <td>1</td>
 <td></td>
-<td></td>
 <td>1</td>
 <td>1</td>
 <td>1</td>
@@ -287,7 +285,6 @@ dtm = create_dtm(it, vectorizer)</code></pre>
 <tr class="even">
 <td>2</td>
 <td>1</td>
-<td></td>
 <td>1</td>
 <td>1</td>
 <td>1</td>
@@ -330,13 +327,13 @@ dtm_tfidf = fit_transform(dtm, tfidf)</code></pre>
 </div>
 <div id="cosine-similarity" class="section level2">
 <h2>3. Cosine similarity</h2>
-<p>With Tf-Idf weight matrix, we can then measure cosine similarities between documents.</p>
+<p>With Tf-Idf weight matrix, we can then measure cosine similarities between sentences.</p>
 <pre class="r"><code>tfidf_cos_sim = sim2(dtm_tfidf, method=&quot;cosine&quot;, norm=&quot;l2&quot;)
 print(tfidf_cos_sim)</code></pre>
 <pre><code>## 2 x 2 sparse Matrix of class &quot;dsCMatrix&quot;
-##           1         2
-## 1 1.0000000 0.7377375
-## 2 0.7377375 1.0000000</code></pre>
+##   1 2
+## 1 1 1
+## 2 1 1</code></pre>
 <p>The result shows the similarity between these two sentences is 1, which indicates they are exactly the same. However, this is not the case. It is obvious that the second sentence has one more word, i.e. <em>too</em>.</p>
 </div>
 <div id="choose-an-appropriate-idf-function" class="section level2">
@@ -351,7 +348,7 @@ print(tfidf_cos_sim)</code></pre>
         idf = log(nrow(x) / (cs))
     Diagonal(x = idf)
 }</code></pre>
-<p>Using this new Idf function, we can compute the cosine similarity again.</p>
+<p>Using this new Idf function, let us compute the cosine similarity again.</p>
 <pre class="r"><code>tfidf = TfIdf$new(smooth_idf = TRUE)
 dtm_tfidf = fit_transform(dtm, tfidf)
 tfidf_cos_sim = sim2(dtm_tfidf, method=&quot;cosine&quot;, norm=&quot;l2&quot;)
