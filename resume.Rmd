@@ -3,9 +3,6 @@ title: "Resume"
 ---
 
 ***
-# PDF Resume
+1. <p>Download my <a href="files/Resume_Yannan.pdf">resume</a>.<p>
 
-Download my resume.
-
-
-# Tableau Interactive Resume
+2.  Check out my Tableau interactive resume

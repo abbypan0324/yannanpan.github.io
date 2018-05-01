@@ -1,0 +1,10 @@
+---
+title: "Consulting Project"
+author: "Team member: Yannan Pan, Xiaowan Liu"
+---
+
+***
+
+<object data="files/ConsultingPoster.pdf#zoom=400" type="application/pdf" width="1000" height="650">
+    alt: <a href="files/ConsultingPoster.pdf#zoom=400">poster.pdf</a>
+</object>

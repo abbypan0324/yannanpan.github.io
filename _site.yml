@@ -5,9 +5,12 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Resume"
-      href: resume.html
-    - text: "More"
+    - text: "Projects"
+      menu:
+        - text: "Consulting"
+        - text: "Carp Movement"
+          href: consulting.html
+    - text: "Blog"
       menu:
         - text: "NLP"
         - text: "Tf-Idf in R"
@@ -16,6 +19,8 @@ navbar:
         - text: "Others"
         - text: "Coming soon"
           href: page_c.html
+    - text: "Resume"
+      href: resume.html
   right:
     - icon: fa-github-square
       href: https://github.com/yannanpan

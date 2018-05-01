@@ -4,13 +4,13 @@ title: "Welcome!"
 
 ***
 
-
 <img src="images/snowme.jpg" style="width:50%;border:1px solid; margin-right: 1px" align="right">
-
 
 Hi, my name is Yannan Pan. 
 
-* I am from [Wuhan](https://en.wikipedia.org/wiki/Wuhan), a beautiful city in Central China. 
+* I am from [Wuhan](https://en.wikipedia.org/wiki/Wuhan), a beautiful city in Central China.
+
+* I studied financial statistics at the Zhongnan University of Economics and Law.
 
 * I am now living in Minneapolis, Minnesota. You must have noticed the snow in the picture :)
 
