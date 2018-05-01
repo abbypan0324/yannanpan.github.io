@@ -1,19 +1,25 @@
 name: "Yannan-website"
 output_dir: "."
 navbar:
-  title: "Yannan's Website"
+  title: "Yannan Pan"
   left:
     - text: "Home"
-      icon: fa-home
       href: index.html
     - text: "About Me"
-      icon: fa-info
       href: about.html
+    - text: "More"
+      menu:
+        - text: "NLP"
+        - text: "Tf-Idf in R"
+          href: tfidf.html
+        - text: "---------"
+        - text: "Others"
+        - text: "Coming soon"
+          href: page_c.html
+
 
 output:
   html_document:
     theme: cosmo
     highlight: textmate
-    include:
-      after_body: footer.html
     css: styles.css

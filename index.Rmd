@@ -1,5 +1,27 @@
 ---
-title: "Yannan's Website"
+title: "Welcome!"
 ---
 
-![](images/me.jpg)
+***
+
+<div style= "float:right;position: relative; top: 5px;">
+![](images/snowme.jpg)
+</div>
+
+
+Hi, my name is Yannan Pan. 
+
+* I am from [Wuhan](https://en.wikipedia.org/wiki/Wuhan), a beautiful city in Central China. 
+
+* I am now living in Minneapolis and studying statistics at the University of Minnesota for my master's degree. 
+
+* I am also a data scientist intern at Seagate Technology.
+
+* I have learned Chinese calligraphy for 6 years.
+
+* I love cats! I used to have a lovely Siamese cat.
+
+
+
+
+

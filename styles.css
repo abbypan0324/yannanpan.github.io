@@ -1,9 +1,28 @@
-blockquote {
-  font-style: italic
+/**
+ * Demo Styles
+ */
+ 
+body {
+  position: relative;
+  margin: 0;
+  padding-bottom: 6rem;
+  min-height: 100%;
+  font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
-imag{
-    width: 200px;
+img{
+    width: 450px;
     display: block;
-    margin: 0 auto;
+    height: auto;
 }
+
+/**
+ * Footer Styles
+ */
+
+footer {
+            background-color: #333;
+            width: 100%;
+            bottom: 0;
+            position: fixed;
+        }

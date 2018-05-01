@@ -1,5 +1,5 @@
 ---
-title: "About me"
+title: "More about me"
 ---
 
-I am a statistics master's student at the University of Minnesota.
+***

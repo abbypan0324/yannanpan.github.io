@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yannan Pan, 04/30/2018" />
+
+
+<title>Measure text similarity using Tf-Idf in R</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Yannan Pan</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About Me</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    More
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">NLP</li>
+    <li>
+      <a href="tfidf.html">Tf-Idf in R</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Others</li>
+    <li>
+      <a href="page_c.html">Coming soon</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Measure text similarity using Tf-Idf in R</h1>
+<h4 class="author"><em>Yannan Pan, 04/30/2018</em></h4>
+
+</div>
+
+
+<hr />
+<div id="what-is-tf-idf" class="section level1">
+<h1>What is Tf-Idf?</h1>
+<p>When it comes to natural language processing, or NLP for short, word embedding is the key. Since most models are incapable of processing strings, we need to convert plain strings into numbers and this mapping of text is defined as word embedding.</p>
+<p><a href="https://en.wikipedia.org/wiki/Bag-of-words_model">Bag-of-words</a> and <a href="https://en.wikipedia.org/wiki/Tf–idf">Tf-Idf</a> are two popular choices of word embedding. Both of them are based on the occurrence of words. Bag-of-words creates a document term matrix which stores how many times a word appears in each document. Tf-Idf is slightly different, as it will adjust for the fact that some words appear more frequently in the corpus. The words that appear frequently are less helpful in distinguishing different documents, so we should assign less weights to them.</p>
+<p>Tf-Idf is defined as the product of term frequency and inverse document frequency. Term frequency denotes the frequency of each word in each document, i.e. <span class="math display">\[tf = f_{t,d}\]</span> <span class="math inline">\(f_{t,d}\)</span> denotes how many times term <span class="math inline">\(t\)</span> appears in document <span class="math inline">\(t\)</span>, which can be found in the document term matrix. Inverse document frequency is defined as follows: <span class="math display">\[idf = \log(\frac{N}{n_t})\]</span> where <span class="math inline">\(N\)</span> denotes the number of documents and <span class="math inline">\(n_t\)</span> denotes how many documents contain term <span class="math inline">\(t\)</span>.</p>
+</div>
+<div id="how-to-measure-text-similarity-using-tf-idf" class="section level1">
+<h1>How to measure text similarity using Tf-Idf?</h1>
+<p><a href="http://text2vec.org">text2vec</a> is a powerful package for text analysis and NLP. Here, I am going to use a simple example to illustrate how we can measure text similarity with Tf-Idf function from text2vec.</p>
+<p>Suppose we have a corpus of only two sentences:</p>
+<ul>
+<li><em>“I love apples.”</em></li>
+<li><em>“I love apples too.”</em></li>
+</ul>
+<div id="preprocessing" class="section level2">
+<h2>1. Preprocessing</h2>
+<p>First, let us convert the text to lowercase letters and remove non-alphanumeric characters.</p>
+<pre class="r"><code>require(stringr)
+require(text2vec)
+
+text = c(&quot;I love apples.&quot;,
+         &quot;I love apples too.&quot;)
+
+prep_fun = function(x) {
+  x %&gt;% 
+    # convert text to lower case
+    str_to_lower %&gt;% 
+    # remove non-alphanumeric characters
+    str_replace_all(&quot;[^[:alnum:]]&quot;, &quot; &quot;)
+}
+
+clean_text = prep_fun(text)</code></pre>
+</div>
+<div id="tf-idf" class="section level2">
+<h2>2. Tf-Idf</h2>
+<p>Next, we can create a dictionary and build a document term matrix for the corpus. The dictionary consists of unique terms in the corpus.</p>
+<pre class="r"><code># build the document term matrix
+it = itoken(clean_text, progressbar = FALSE)
+v = create_vocabulary(it)
+vectorizer = vocab_vectorizer(v)
+dtm = create_dtm(it, vectorizer)</code></pre>
+<p>We can get the following document term matrix:</p>
+<table>
+<thead>
+<tr class="header">
+<th>document</th>
+<th>too</th>
+<th>oranges</th>
+<th>apples</th>
+<th>i</th>
+<th>love</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td></td>
+<td></td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>1</td>
+<td></td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Then we can define a Tf-Idf model. By default, text2vec sets <em>smooth_idf=TRUE</em> so as to prevent a division-by-zero, that is adding 1 to the document frequency: <span class="math display">\[smooth\_idf = \log(\frac{N}{n_t + 1})\]</span></p>
+<pre class="r"><code># Tf-Idf weights
+tfidf = TfIdf$new(smooth_idf = TRUE)
+dtm_tfidf = fit_transform(dtm, tfidf)</code></pre>
+<p>The model yields the following Tf-Idf weight matrix:</p>
+<table>
+<thead>
+<tr class="header">
+<th>document</th>
+<th>too</th>
+<th>apples</th>
+<th>i</th>
+<th>love</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td></td>
+<td>-0.135</td>
+<td>-0.135</td>
+<td>-0.135</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0</td>
+<td>-0.101</td>
+<td>-0.101</td>
+<td>-0.101</td>
+</tr>
+</tbody>
+</table>
+<p>Tf-Idf decreases the weight for common words and increases the weight for rare words. It will also normalize the document term matrix. For example, we get the weight for term <em>apples</em> in the first sentence by <span class="math inline">\(\frac{1}{3}\cdot \log{\frac{2}{2+1}} = -0.135\)</span> and we get the weight for term <em>too</em> in the second sentence by <span class="math inline">\(\frac{1}{4}\cdot \log{\frac{2}{1+1}} = 0\)</span>.</p>
+</div>
+<div id="cosine-similarity" class="section level2">
+<h2>3. Cosine similarity</h2>
+<p>With Tf-Idf weight matrix, we can then measure cosine similarities between documents.</p>
+<pre class="r"><code>tfidf_cos_sim = sim2(dtm_tfidf, method=&quot;cosine&quot;, norm=&quot;l2&quot;)
+print(tfidf_cos_sim)</code></pre>
+<pre><code>## 2 x 2 sparse Matrix of class &quot;dsCMatrix&quot;
+##           1         2
+## 1 1.0000000 0.7377375
+## 2 0.7377375 1.0000000</code></pre>
+<p>The result shows the similarity between these two sentences is 1, which indicates they are exactly the same. However, this is not the case. It is obvious that the second sentence has one more word, i.e. <em>too</em>.</p>
+</div>
+<div id="choose-an-appropriate-idf-function" class="section level2">
+<h2>4. Choose an appropriate IDF function</h2>
+<p>We run into this problem because of the Idf function. Whenever one term appears in all documents except one, this term will given no weight using the default Idf function in text2vec. The example here might be a special case where we only have two sentences and they only differ in one word, but we can avoid such problems by choosing an appropriate Idf function.</p>
+<p>We can use some other variants of Idf other than the <a href="https://github.com/dselivanov/text2vec/blob/master/R/model_tfidf.R">default</a>. For example, one popular choice is <span class="math display">\[idf = \log(\frac{N}{n_t} + 1)\]</span></p>
+<pre class="r"><code>TfIdf$private_methods$get_idf = function(x) {
+    cs = colSums( abs(sign(x) ) )
+    if (private$smooth_idf)
+        idf = log(nrow(x) / cs + 1)
+    else
+        idf = log(nrow(x) / (cs))
+    Diagonal(x = idf)
+}</code></pre>
+<p>Using this new Idf function, we can compute the cosine similarity again.</p>
+<pre class="r"><code>tfidf = TfIdf$new(smooth_idf = TRUE)
+dtm_tfidf = fit_transform(dtm, tfidf)
+tfidf_cos_sim = sim2(dtm_tfidf, method=&quot;cosine&quot;, norm=&quot;l2&quot;)
+print(tfidf_cos_sim)</code></pre>
+<pre><code>## 2 x 2 sparse Matrix of class &quot;dsCMatrix&quot;
+##           1         2
+## 1 1.0000000 0.7377375
+## 2 0.7377375 1.0000000</code></pre>
+<p>The two sentences have a similarity score of 0.74, which makes more sense to me.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
