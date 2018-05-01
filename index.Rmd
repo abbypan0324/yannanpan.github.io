@@ -4,9 +4,8 @@ title: "Welcome!"
 
 ***
 
-<div style= "float:right;position: relative; top: 5px;">
-![](images/snowme.jpg)
-</div>
+
+<img src="images/snowme.jpg" style="width:50%;border:1px solid; margin-right: 1px" align="right">
 
 
 Hi, my name is Yannan Pan. 
@@ -15,9 +14,9 @@ Hi, my name is Yannan Pan.
 
 * I am now living in Minneapolis, Minnesota. You must have noticed the snow in the picture :)
 
-* I am studying statistics at the University of Minnesota for my master's degree. 
+* I am studying statistics at the [University of Minnesota](https://twin-cities.umn.edu) for my master's degree. 
 
-* I am also a data scientist intern at Seagate Technology.
+* I am also a data scientist intern at [Seagate Technology](https://www.seagate.com).
 
 * I have learned Chinese calligraphy for 6 years.
 

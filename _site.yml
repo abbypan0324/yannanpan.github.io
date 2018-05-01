@@ -16,10 +16,16 @@ navbar:
         - text: "Others"
         - text: "Coming soon"
           href: page_c.html
-
+  right:
+    - icon: fa-github-square
+      href: https://github.com/yannanpan
+    - icon: fa-linkedin
+      href: https://www.linkedin.com/in/yannanpan/
 
 output:
   html_document:
     theme: cosmo
     highlight: textmate
+    include:
+      after_body: footer.html
     css: styles.css

@@ -1,6 +1,10 @@
 ---
 title: "Measure text similarity using Tf-Idf in R"
 author: "Yannan Pan, 04/30/2018"
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 ***
 
@@ -16,7 +20,7 @@ $f_{t,d}$ denotes how many times term $t$ appears in document $t$, which can be 
 \[idf = \log(\frac{N}{n_t})\]
 where $N$ denotes the number of documents and $n_t$ denotes how many documents contain term $t$.
 
-# How to measure text similarity using Tf-Idf?
+# Text similarity with Tf-Idf
 
 [text2vec](http://text2vec.org) is a powerful package for text analysis and NLP. Here, I am going to use a simple example to illustrate how we can measure text similarity with Tf-Idf function from text2vec. 
 

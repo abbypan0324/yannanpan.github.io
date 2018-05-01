@@ -20,9 +20,13 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -165,6 +169,101 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
@@ -205,7 +304,18 @@ $(document).ready(function () {
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/yannanpan">
+    <span class="fa fa-github-square"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.linkedin.com/in/yannanpan/">
+    <span class="fa fa-linkedin"></span>
+     
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -228,8 +338,8 @@ $(document).ready(function () {
 <p><a href="https://en.wikipedia.org/wiki/Bag-of-words_model">Bag-of-words</a> and <a href="https://en.wikipedia.org/wiki/Tf–idf">Tf-Idf</a> are two popular choices of word embedding. Both of them are based on the occurrence of words. Bag-of-words creates a document term matrix which stores how many times a word appears in each document. Tf-Idf is slightly different, as it will adjust for the fact that some words appear more frequently in the corpus. The words that appear frequently are less helpful in distinguishing documents, so we should assign less weights to them.</p>
 <p>Tf-Idf is defined as the product of term frequency and inverse document frequency. Term frequency denotes the frequency of each word in each document, i.e. <span class="math display">\[tf = f_{t,d}\]</span> <span class="math inline">\(f_{t,d}\)</span> denotes how many times term <span class="math inline">\(t\)</span> appears in document <span class="math inline">\(t\)</span>, which can be found in the document term matrix. Inverse document frequency is defined as follows: <span class="math display">\[idf = \log(\frac{N}{n_t})\]</span> where <span class="math inline">\(N\)</span> denotes the number of documents and <span class="math inline">\(n_t\)</span> denotes how many documents contain term <span class="math inline">\(t\)</span>.</p>
 </div>
-<div id="how-to-measure-text-similarity-using-tf-idf" class="section level1">
-<h1>How to measure text similarity using Tf-Idf?</h1>
+<div id="text-similarity-with-tf-idf" class="section level1">
+<h1>Text similarity with Tf-Idf</h1>
 <p><a href="http://text2vec.org">text2vec</a> is a powerful package for text analysis and NLP. Here, I am going to use a simple example to illustrate how we can measure text similarity with Tf-Idf function from text2vec.</p>
 <p>Suppose we have a corpus of only two sentences:</p>
 <ul>
@@ -361,8 +471,15 @@ print(tfidf_cos_sim)</code></pre>
 </div>
 </div>
 
+<footer>
+<p>&copy; YANNAN PAN</p>
+<p>Email me: <a href="mailto:panxx396@umn.edu">
+    panxx396@umn.edu</a>.</p>
+</footer>
 
 
+</div>
+</div>
 
 </div>
 
