@@ -22,6 +22,9 @@ Hi, my name is Yannan Pan.
 
 * I love cats! I used to have a lovely Siamese cat.
 
+* <p>Email me: <a href="mailto:panxx396@umn.edu">
+    panxx396@umn.edu</a></p>
+
 
 
 
