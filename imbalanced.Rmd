@@ -1,0 +1,245 @@
+---
+title: "Cost-sensitive learning for Imbalanced Classification"
+author: "Yannan Pan, 05/02/2018"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+***
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+
+# Imbalanced Classification
+
+Imbalance is common in classification problems. Usually and without loss of generality, the minority class is treated as the positive class and it is more costly to make a false-negative mistake. 
+
+For example, we can define a cost matrix for binary classification problems, where $c(i,j)$ denotes the cost of classifying an observation from its true class $j$ into its predicted class $i$. For an imbalanced classification, $c(0,1)$ is usually much higher than $c(1,0)$.
+
+|                    |   True positive |    True negative |
+|--------------------|-----------------|------------------|
+|**Predict positive**|     c(1,1)      |      c(1,0)      | 
+|**Predict negative**|     c(0,1)      |      c(0,0)      | 
+
+Ideally, the cost can be determined by domain experts. However, cost values may not be available for some real-world problems. In this case, we can assign cost values to be roughly the number of instances of the opposite class.
+
+<br>
+
+# Cost-sensitive Learning
+
+So, how can we handle an imbalanced dataset? 
+
+I have been struggling with this problem for a while. Some people suggested tree-methods such as boosting or bagging, while other people voted for sampling. With so many techniques I can utilize, I feel a little "spoilt for choice" and do not know where to start.
+
+Fortunately, [Ling and Sheng (2008)](http://www.csd.uwo.ca/faculty/ling/papers/cost_sensitive.pdf) provided a structure of cost-sensitive learning system for class imbalance problems. Here, I will summarize the structure in their paper and briefly explain each method.
+
+<br>
+
+## 1. Direct Methods
+
+Direct methods will build classifiers that directly minimize the misclassification costs. In other words, direct methods will take into consideration the cost while building models. 
+
+- [Ling et al. (2004)](https://cling.csd.uwo.ca/papers/ICML04-Ling.pdf) proposed a method which uses a criterion of minimal total cost on training data, instead of minimal entropy, to build decision trees. However, I did not find any library of this algorithm. If you do, please let me know!
+
+- [Chen et al. (2004)](http://statistics.berkeley.edu/sites/default/files/tech-reports/666.pdf) proposed a way to incorporate class weights into Random Forest, thus making it cost-sensitive. Specifically, class weights are used to weight the Gini criterion for finding splits during the tree growing process; class weights are also taken into consideration in the terminal nodes of each tree, i.e. the class prediction of each terminal node is determined by "weighted majority vote". Free softwares can be downloaded [here](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm). 
+
+- CART, penalized-SVM and C5.0 are some common approaches that can incorportate costs into the training process.
+
+<br>
+
+## 2. Meta-learning
+
+Different from direct methods, meta-learning methods do NOT handle costs in the learning process. Meta-learning methods build cost-sensitive classifiers by pre-processing the training data or post-processing the output, i.e. sampling or thresholding. Technically speaking, meta-learning can convert any cost-insensitive algorithm into a cost-sensitive one. 
+
+<br>
+
+### a. Sampling
+
+Sampling can be used to balance the dataset before we implement classification algorithms. It can alter the class distribution based on the cost matrix. Some common sampling methods include oversampling, undersampling and SMOTE. Take undersampling as an example. If we keep all positive instances, then the number of negative instances should be multiplied by 
+$\frac{FP}{FN}$, which is less than 1 as usually $FP < FN$. In general, positive and negative instances are sampled by the ratio of \[\frac{1}{FP/FN} = \frac{FN}{FP}\]
+
+Weighting can also be viewed as a sampling method, which assigns unequal weights to instances based on the misclassification cost. 
+
+<br>
+
+### b. Thresholding
+
+Thresholding can be used to relabel the class after a classifier is built. It requires the output of classifiers to be probabilities. 
+
+i. Theoretical Thresholding
+
+If a classifier can produce accurate probability estimations, we can use a theoretical threshold to classify instances. The theoretical threshold is defined based on the cost matrix.
+
+\[p = \frac{c(1,0)}{c(0,1)+c(1,0)}=\frac{FP}{FP+FN}\]
+
+ii. Empirical Thresholding
+
+Empirical thresholding does not require an accurate estimation of probabilities - an accurate ranking will be sufficient. It will search the best probability from the training set and uses that probability as the threshold to classify test instances. How we define this best probability depends on our criterion. It can be the threshold that minimizes the misclassification cost. It can also be the threshold that produces the largest area under the ROC curve.
+
+- [Sheng and Ling (2006)](https://www.aaai.org/Papers/AAAI/2006/AAAI06-076.pdf) proposed a thresholding method that can be applied to any cost-insensitive classifier.
+         
+<br>
+
+# Example
+
+Let us use an example to address the class imbalance. The analyzed dataset was a 1994 German credit dataset from the research of Dr. Hans Hofmann from the UCI Machine Learning repository. This dataset consisted of 1000 observations and 20 attributes without any missing values. The response is a binary variable which describes each customer as good or bad.
+
+```{r, message=FALSE, warning=FALSE}
+library(caret)
+library(pROC)
+library(C50)
+library(DMwR)
+## Read data
+german = read.table('code/germancredit.txt')
+colnames(german)[21] = 'score'
+german$score = factor(german$score, levels=c(1,2), labels=c("good","bad"))
+table(german$score) # original class distribution
+```
+
+700 of the customers were considered good and 300 were considered bad, which indicates this is an imbalanced dataset. We can define a cost matrix using the number of examples in each class.
+
+```{r}
+## Cost matrix
+cost_mat <- matrix(c(0, 3, 7, 0), nrow = 2)
+rownames(cost_mat) <- colnames(cost_mat) <- levels(german$score)
+cost_mat
+```
+
+For the thresholding approach, the threshold should be determined using a different set (evaluation set) other than the training set and the test set. Here, I split the whole dataset into three parts, training:evaluation:test = 7:1:2.
+
+```{r}
+## Training-evaluation-test split
+set.seed(2426)
+train_idx = createDataPartition(german$score, p=0.7)[[1]]
+training = german[train_idx,]
+other = german[-train_idx,]
+
+eval_idx = createDataPartition(other$score, p=1/3)[[1]]
+evaluation = other[eval_idx,]
+test = other[-eval_idx,]
+```
+
+## 1.Baseline
+
+First, let us define training parameters and train a random forest model to serve as the baseline. 
+
+```{r, message=FALSE}
+## CV
+cvCtrl <- trainControl(method = "cv",
+                       summaryFunction = twoClassSummary,
+                       classProbs = TRUE)
+
+## Baseline
+set.seed(789)
+rfFit <- train(score ~., data = training,
+                 method = 'rf',
+                 trControl = cvCtrl,
+                 ntree = 1000,
+                 tuneLength = 10,
+                 metric = "ROC")
+
+baseProb <- predict(rfFit, newdata = test, type = "prob")[,1]
+basePred <- predict(rfFit, newdata = test)
+baseCM <- confusionMatrix(basePred, test$score)
+baseCM$table
+```
+
+## 2. Sampling
+
+For the sampling method, I will use a hybrid sampling method -- SMOTE. Different from oversampling, which oversamples the minority class with replacement, SMOTE generates synthetic examples from the minority class.
+
+```{r}
+## Sampling
+set.seed(111)
+smoteTrain <- SMOTE(score ~ ., data=training)
+table(smoteTrain$score) # class distribution after sampling
+
+set.seed(789)
+smoteFit <- train(score ~., data = smoteTrain,
+                  method = 'rf',
+                  trControl = cvCtrl,
+                  ntree = 1000,
+                  tuneLength = 10,
+                  metric = "ROC")
+
+smotePred <- predict(smoteFit, newdata = test)
+smoteCM <- confusionMatrix(smotePred, test$score)
+smoteCM$table
+```
+
+## 3. Thresholding
+
+For the thresholding method, I will use the baseline model to predict the evaluation set and find the best threshold that is closest to the perfect model (specificity = sensitivity =1). Then I will relabel the predicted class from the baseline model using the new threshold.
+
+```{r}
+## Thresholding
+evalResults <- data.frame(score = evaluation$score)
+evalResults$RF <- predict(rfFit, newdata = evaluation, type = "prob")[,1]
+
+rfROC <- roc(evalResults$score, evalResults$RF,
+               levels = rev(levels(evalResults$score)))
+# best threshold
+rfThresh <- coords(rfROC, x = "best", best.method = "closest.topleft")  
+# predict the test set using the new threshold
+threPred <- factor(ifelse(baseProb > rfThresh[1],
+                          "good", "bad"),
+                   levels = levels(evalResults$score))
+threCM <- confusionMatrix(threPred, test$score)
+threCM$table
+```
+
+## 4. Direct methods
+
+For direct methods, I will use a C5.0 model. Since the predict function for C5.0 does not produce probabilities when employing costs, we cannot use ROC as the metric, so I will use Kappa instead. Besides, C5.0 function can only have 100 boosting iterations at most. 
+
+```{r, message=FALSE}
+## C5.0
+cvCtrlNoProb <- cvCtrl
+cvCtrlNoProb$summaryFunction <- defaultSummary
+cvCtrlNoProb$classProbs <- FALSE
+
+set.seed(789)
+c5Fit <- train(score ~., data = training,
+               method = 'C5.0',
+               trControl = cvCtrlNoProb,
+               tuneGrid = data.frame(.model = "tree",
+                                     .trials = c(1:100),
+                                     .winnow = FALSE),
+               metric = "Kappa",
+               cost = cost_mat)
+
+c5Pred <- predict(c5Fit, newdata = test)
+c5CM <- confusionMatrix(c5Pred, test$score)
+c5CM$table
+```
+
+## 5. Comparison
+
+Here, we only tested various approaches on 1/10 of the whole dataset and there are many random procedures involved. To compare these methods and get a consistent result, I would repeat all the above steps  times and take the average of the test set cost.
+
+```{r, message=FALSE, warning=FALSE}
+source("code/costsensitive.R")
+res = test_cost_repeat(10)
+apply(res, 2, mean)
+```
+
+## 6. Next steps
+
+In terms of the method comparison, the cross-validation might be a better way compared to repeated sampling. My next step would be to use an external cross-validation to validate all the instances.
+
+<br>
+
+# Reference
+
+1. Ling, C. X., & Sheng, V. S. Cost-sensitive learning and the class imbalance problem. 2008.
+
+2. Chen, C., Liaw, A., & Breiman, L. (2004). Using random forest to learn imbalanced data. *University of California, Berkeley, 110*, 1-12.
+
+3. Sheng, V. S., & Ling, C. X. (2006, July). Thresholding for making classifiers cost-sensitive. In *AAAI* (pp. 476-481).
+
+4. Kuhn, M., & Johnson, K. (2013). Applied predictive modeling (Vol. 26). New York: Springer.
+

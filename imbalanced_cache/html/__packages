@@ -1,0 +1,16 @@
+base
+lattice
+ggplot2
+caret
+pROC
+C50
+DMwR
+randomForest
+plyr
+foreach
+iterators
+doParallel
+htmltools
+stringr
+text2vec
+rpart

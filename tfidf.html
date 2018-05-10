@@ -296,7 +296,7 @@ div.tocify {
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Blog
+    Notes
      
     <span class="caret"></span>
   </a>
@@ -308,12 +308,9 @@ div.tocify {
     <li class="divider"></li>
     <li class="dropdown-header">Others</li>
     <li>
-      <a href="page_c.html">Coming soon</a>
+      <a href="imbalanced.html">Imbalanced Classification</a>
     </li>
   </ul>
-</li>
-<li>
-  <a href="resume.html">Resume</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -350,6 +347,7 @@ div.tocify {
 <p>When it comes to natural language processing, or NLP for short, word embedding is the key. Since most models are incapable of processing strings, we need to convert plain strings into numbers and this mapping of text is defined as word embedding.</p>
 <p><a href="https://en.wikipedia.org/wiki/Bag-of-words_model">Bag-of-words</a> and <a href="https://en.wikipedia.org/wiki/Tf–idf">Tf-Idf</a> are two popular choices of word embedding. Both of them are based on the occurrence of words. Bag-of-words creates a document term matrix which stores how many times a word appears in each document. Tf-Idf is slightly different, as it will adjust for the fact that some words appear more frequently in the corpus. The words that appear frequently are less helpful in distinguishing documents, so we should assign less weights to them.</p>
 <p>Tf-Idf is defined as the product of term frequency and inverse document frequency. Term frequency denotes the frequency of each word in each document, i.e. <span class="math display">\[tf = f_{t,d}\]</span> <span class="math inline">\(f_{t,d}\)</span> denotes how many times term <span class="math inline">\(t\)</span> appears in document <span class="math inline">\(t\)</span>, which can be found in the document term matrix. Inverse document frequency is defined as follows: <span class="math display">\[idf = \log(\frac{N}{n_t})\]</span> where <span class="math inline">\(N\)</span> denotes the number of documents and <span class="math inline">\(n_t\)</span> denotes how many documents contain term <span class="math inline">\(t\)</span>.</p>
+<p><br></p>
 </div>
 <div id="text-similarity-with-tf-idf" class="section level1">
 <h1>Text similarity with Tf-Idf</h1>
@@ -359,6 +357,7 @@ div.tocify {
 <li><em>“I love apples.”</em></li>
 <li><em>“I love apples too.”</em></li>
 </ul>
+<p><br></p>
 <div id="preprocessing" class="section level2">
 <h2>1. Preprocessing</h2>
 <p>First, let us convert the text to lowercase letters and remove non-alphanumeric characters.</p>
@@ -377,6 +376,7 @@ prep_fun = function(x) {
 }
 
 clean_text = prep_fun(text)</code></pre>
+<p><br></p>
 </div>
 <div id="tf-idf" class="section level2">
 <h2>2. Tf-Idf</h2>
@@ -447,6 +447,7 @@ dtm_tfidf = fit_transform(dtm, tfidf)</code></pre>
 </tbody>
 </table>
 <p>Tf-Idf decreases the weight for common words and increases the weight for rare words. It will also normalize the document term matrix. For example, we get the weight for term <em>apples</em> in the first sentence by <span class="math inline">\(\frac{1}{3}\cdot \log{\frac{2}{2+1}} = -0.135\)</span> and we get the weight for term <em>too</em> in the second sentence by <span class="math inline">\(\frac{1}{4}\cdot \log{\frac{2}{1+1}} = 0\)</span>.</p>
+<p><br></p>
 </div>
 <div id="cosine-similarity" class="section level2">
 <h2>3. Cosine similarity</h2>
@@ -458,6 +459,7 @@ print(tfidf_cos_sim)</code></pre>
 ## 1 1 1
 ## 2 1 1</code></pre>
 <p>The result shows the similarity between these two sentences is 1, which indicates they are exactly the same. However, this is not the case. It is obvious that the second sentence has one more word, i.e. <em>too</em>.</p>
+<p><br></p>
 </div>
 <div id="choose-an-appropriate-idf-function" class="section level2">
 <h2>4. Choose an appropriate IDF function</h2>
@@ -480,7 +482,7 @@ print(tfidf_cos_sim)</code></pre>
 ##           1         2
 ## 1 1.0000000 0.7377375
 ## 2 0.7377375 1.0000000</code></pre>
-<p>The two sentences have a similarity score of 0.74, which makes more sense to me.</p>
+<p>The two sentences now have a similarity score of 0.74, which makes more sense to me.</p>
 </div>
 </div>
 

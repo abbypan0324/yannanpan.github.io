@@ -1,10 +1,24 @@
 ---
 title: "Consulting Project"
-author: "Team member: Yannan Pan, Xiaowan Liu"
+author: "Aaron Rendahl, Yannan Pan, Xiaowan Liu -- University of Minnesota Statistical Consulting Center"
 ---
 
 ***
 
-<object data="files/ConsultingPoster.pdf#zoom=400" type="application/pdf" width="1000" height="650">
+# Background and goals
+
+This project is a collaboration with the Department of Fisheries, Wildlife and Conservation Biology, University of Minnesota. Our client studies the common carp (*Cyprinus carpio*), an invasive species in Minnesota. Accroding to him, long-term and sustainable management of invasive fish requires an understanding of patterns in distribution and migration, such as diel activity patterns, diurnal and nocturnal patterns, crepuscular patterns, etc. (Banet, 2016)
+
+Our goal is to help our client discover if there is a movement pattern on a 24-hour scale for adult common carp, which he has captured and tracked from 2013 to 2015. Specifically, we are supposed to identify diel patterns in distance carp moved in relation to four factors: phase, time of the day, sex and lake habitat (Banet, 2016).
+
+<br>
+
+# Deliverables
+
+Our work provided valuable input into our client's thesis[^1], which is published and available online on the University of Minnesota Digital Conservancy. Xiaowan and I also presented our work at the poster session of Twin Cities ASA 2016 Fall Research Meeting. Please find more details in the following poster.
+
+<object data="files/ConsultingPoster.pdf#zoom=500" type="application/pdf" width="900" height="600">
     alt: <a href="files/ConsultingPoster.pdf#zoom=400">poster.pdf</a>
 </object>
+
+[^1]: Banet, Nathan. (2016). Partial migration, homing, diel activity, and distribution of adult common carp across a large, model watershed in the North American Midwest. Retrieved from the University of Minnesota Digital Conservancy, <http://hdl.handle.net/11299/182706>. 

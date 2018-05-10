@@ -1,36 +1,34 @@
-name: "Yannan-website"
-output_dir: "."
+name: Yannan-website
+output_dir: .
 navbar:
-  title: "Yannan Pan"
+  title: Yannan Pan
   left:
-    - text: "Home"
-      href: index.html
-    - text: "Projects"
-      menu:
-        - text: "Consulting"
-        - text: "Carp Movement"
-          href: consulting.html
-    - text: "Blog"
-      menu:
-        - text: "NLP"
-        - text: "Tf-Idf in R"
-          href: tfidf.html
-        - text: "---------"
-        - text: "Others"
-        - text: "Coming soon"
-          href: page_c.html
-    - text: "Resume"
-      href: resume.html
+  - text: Home
+    href: index.html
+  - text: Projects
+    menu:
+    - text: Consulting
+    - text: Carp Movement
+      href: consulting.html
+  - text: Notes
+    menu:
+    - text: NLP
+    - text: Tf-Idf in R
+      href: tfidf.html
+    - text: '---------'
+    - text: Others
+    - text: Imbalanced Classification
+      href: imbalanced.html
   right:
-    - icon: fa-github-square
-      href: https://github.com/yannanpan
-    - icon: fa-linkedin
-      href: https://www.linkedin.com/in/yannanpan/
-
+  - icon: fa-github-square
+    href: https://github.com/yannanpan
+  - icon: fa-linkedin
+    href: https://www.linkedin.com/in/yannanpan/
 output:
   html_document:
     theme: cosmo
     highlight: textmate
-    # include:
-    #   after_body: footer.html
     css: styles.css
+    lib_dir: site_libs
+    self_contained: no
+

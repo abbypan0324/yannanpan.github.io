@@ -20,6 +20,8 @@ $f_{t,d}$ denotes how many times term $t$ appears in document $t$, which can be 
 \[idf = \log(\frac{N}{n_t})\]
 where $N$ denotes the number of documents and $n_t$ denotes how many documents contain term $t$.
 
+<br>
+
 # Text similarity with Tf-Idf
 
 [text2vec](http://text2vec.org) is a powerful package for text analysis and NLP. Here, I am going to use a simple example to illustrate how we can measure text similarity with Tf-Idf function from text2vec. 
@@ -28,6 +30,8 @@ Suppose we have a corpus of only two sentences:
 
 * _"I love apples."_
 * _"I love apples too."_
+
+<br>
 
 ## 1. Preprocessing
 
@@ -50,6 +54,8 @@ prep_fun = function(x) {
 
 clean_text = prep_fun(text)
 ```
+
+<br>
 
 ## 2. Tf-Idf
 
@@ -99,6 +105,8 @@ document | too | apples |     i   | love
 
 Tf-Idf decreases the weight for common words and increases the weight for rare words. It will also normalize the document term matrix. For example, we get the weight for term *apples* in the first sentence by $\frac{1}{3}\cdot \log{\frac{2}{2+1}} = -0.135$ and we get the weight for term *too* in the second sentence by $\frac{1}{4}\cdot \log{\frac{2}{1+1}} = 0$.
 
+<br>
+
 ## 3. Cosine similarity
 
 With Tf-Idf weight matrix, we can then measure cosine similarities between sentences.
@@ -109,6 +117,8 @@ print(tfidf_cos_sim)
 ```
 
 The result shows the similarity between these two sentences is 1, which indicates they are exactly the same. However, this is not the case. It is obvious that the second sentence has one more word, i.e. *too*.
+
+<br>
 
 ## 4. Choose an appropriate IDF function
 
@@ -137,4 +147,4 @@ tfidf_cos_sim = sim2(dtm_tfidf, method="cosine", norm="l2")
 print(tfidf_cos_sim)
 ```
 
-The two sentences have a similarity score of 0.74, which makes more sense to me.
+The two sentences now have a similarity score of 0.74, which makes more sense to me.
