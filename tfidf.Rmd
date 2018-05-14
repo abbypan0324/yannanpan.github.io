@@ -24,7 +24,7 @@ where $N$ denotes the number of documents and $n_t$ denotes how many documents c
 
 # Text similarity with Tf-Idf
 
-[text2vec](http://text2vec.org) is a powerful package for text analysis and NLP. Here, I am going to use a simple example to illustrate how we can measure text similarity with Tf-Idf function from text2vec. 
+[text2vec](http://text2vec.org) is a powerful package for text analysis and NLP. Here, I am going to use a simple example to illustrate how we can measure text similarity with Tf-Idf function from text2vec, and especially we will see how important it is to choose **an appropriate Idf function**.
 
 Suppose we have a corpus of only two sentences:
 
