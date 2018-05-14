@@ -19,6 +19,9 @@ navbar:
     - text: Others
     - text: Imbalanced Classification
       href: imbalanced.html
+  - text: Resume
+    href: resume.html
+  
   right:
   - icon: fa-github-square
     href: https://github.com/yannanpan

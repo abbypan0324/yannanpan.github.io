@@ -312,6 +312,9 @@ div.tocify {
     </li>
   </ul>
 </li>
+<li>
+  <a href="resume.html">Resume</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -463,11 +466,9 @@ rfFit &lt;- train(score ~., data = training,
                  trControl = cvCtrl,
                  ntree = 1000,
                  tuneLength = 10,
-                 metric = &quot;ROC&quot;)</code></pre>
-<pre><code>## Warning: closing unused connection 8 (&lt;-localhost:11936)</code></pre>
-<pre><code>## Warning: closing unused connection 7 (&lt;-localhost:11936)</code></pre>
-<pre><code>## Warning: closing unused connection 6 (&lt;-localhost:11936)</code></pre>
-<pre class="r"><code>baseProb &lt;- predict(rfFit, newdata = test, type = &quot;prob&quot;)[,1]
+                 metric = &quot;ROC&quot;)
+
+baseProb &lt;- predict(rfFit, newdata = test, type = &quot;prob&quot;)[,1]
 basePred &lt;- predict(rfFit, newdata = test)
 baseCM &lt;- confusionMatrix(basePred, test$score)
 baseCM$table</code></pre>
@@ -521,8 +522,8 @@ threCM &lt;- confusionMatrix(threPred, test$score)
 threCM$table</code></pre>
 <pre><code>##           Reference
 ## Prediction good bad
-##       good   89  11
-##       bad    51  49</code></pre>
+##       good   95  15
+##       bad    45  45</code></pre>
 </div>
 <div id="direct-methods-1" class="section level2">
 <h2>4. Direct methods</h2>
@@ -547,8 +548,8 @@ c5CM &lt;- confusionMatrix(c5Pred, test$score)
 c5CM$table</code></pre>
 <pre><code>##           Reference
 ## Prediction good bad
-##       good  118  25
-##       bad    22  35</code></pre>
+##       good  131  35
+##       bad     9  25</code></pre>
 </div>
 <div id="comparison" class="section level2">
 <h2>5. Comparison</h2>
@@ -563,6 +564,7 @@ apply(res, 2, mean)</code></pre>
 <h2>6. Next steps</h2>
 <p>In terms of the method comparison, the cross-validation might be a better way compared to repeated sampling. My next step would be to use an external cross-validation to validate all the instances.</p>
 <p><br></p>
+<hr />
 </div>
 </div>
 <div id="reference" class="section level1">

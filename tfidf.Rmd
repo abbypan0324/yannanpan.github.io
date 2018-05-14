@@ -61,7 +61,7 @@ clean_text = prep_fun(text)
 
 Next, we can create a dictionary and build a document term matrix for the corpus. The dictionary consists of unique terms in the corpus.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # build the document term matrix
 it = itoken(clean_text, progressbar = FALSE)
 v = create_vocabulary(it)
@@ -90,7 +90,7 @@ TfIdf$private_methods$get_idf = function(x) {
 }
 ```
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Tf-Idf weights
 tfidf = TfIdf$new(smooth_idf = TRUE)
 dtm_tfidf = fit_transform(dtm, tfidf)
@@ -111,7 +111,7 @@ Tf-Idf decreases the weight for common words and increases the weight for rare w
 
 With Tf-Idf weight matrix, we can then measure cosine similarities between sentences.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 tfidf_cos_sim = sim2(dtm_tfidf, method="cosine", norm="l2")
 print(tfidf_cos_sim)
 ```
@@ -127,7 +127,7 @@ We run into this problem because of the Idf function. Whenever one term appears 
 We can use some other variants of Idf other than the [default](https://github.com/dselivanov/text2vec/blob/master/R/model_tfidf.R). For example, one popular choice is
 \[idf = \log(\frac{N}{n_t} + 1)\]
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 TfIdf$private_methods$get_idf = function(x) {
     cs = colSums( abs(sign(x) ) )
     if (private$smooth_idf)
@@ -140,7 +140,7 @@ TfIdf$private_methods$get_idf = function(x) {
 
 Using this new Idf function, let us compute the cosine similarity again.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 tfidf = TfIdf$new(smooth_idf = TRUE)
 dtm_tfidf = fit_transform(dtm, tfidf)
 tfidf_cos_sim = sim2(dtm_tfidf, method="cosine", norm="l2")

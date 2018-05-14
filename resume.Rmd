@@ -1,8 +1,9 @@
 ---
-title: "Resume"
+title: "Tableau Resume"
 ---
 
 ***
-1. <p>Download my <a href="files/Resume_Yannan.pdf">resume</a>.<p>
 
-2.  Check out my Tableau interactive resume
+This may take a while :)
+
+<iframe src="https://public.tableau.com/views/resume_32/Resume?:showVizHome=no&:embed=true" width="900" height="780" style="border: none;"></iframe>

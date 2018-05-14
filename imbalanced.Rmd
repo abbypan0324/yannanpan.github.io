@@ -102,7 +102,7 @@ table(german$score) # original class distribution
 
 700 of the customers were considered good and 300 were considered bad, which indicates this is an imbalanced dataset. We can define a cost matrix using the number of examples in each class.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## Cost matrix
 cost_mat <- matrix(c(0, 3, 7, 0), nrow = 2)
 rownames(cost_mat) <- colnames(cost_mat) <- levels(german$score)
@@ -111,7 +111,7 @@ cost_mat
 
 For the thresholding approach, the threshold should be determined using a different set (evaluation set) other than the training set and the test set. Here, I split the whole dataset into three parts, training:evaluation:test = 7:1:2.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## Training-evaluation-test split
 set.seed(2426)
 train_idx = createDataPartition(german$score, p=0.7)[[1]]
@@ -127,7 +127,7 @@ test = other[-eval_idx,]
 
 First, let us define training parameters and train a random forest model to serve as the baseline. 
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 ## CV
 cvCtrl <- trainControl(method = "cv",
                        summaryFunction = twoClassSummary,
@@ -152,7 +152,7 @@ baseCM$table
 
 For the sampling method, I will use a hybrid sampling method -- SMOTE. Different from oversampling, which oversamples the minority class with replacement, SMOTE generates synthetic examples from the minority class.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## Sampling
 set.seed(111)
 smoteTrain <- SMOTE(score ~ ., data=training)
@@ -175,7 +175,7 @@ smoteCM$table
 
 For the thresholding method, I will use the baseline model to predict the evaluation set and find the best threshold that is closest to the perfect model (specificity = sensitivity =1). Then I will relabel the predicted class from the baseline model using the new threshold.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ## Thresholding
 evalResults <- data.frame(score = evaluation$score)
 evalResults$RF <- predict(rfFit, newdata = evaluation, type = "prob")[,1]
@@ -196,7 +196,7 @@ threCM$table
 
 For direct methods, I will use a C5.0 model. Since the predict function for C5.0 does not produce probabilities when employing costs, we cannot use ROC as the metric, so I will use Kappa instead. Besides, C5.0 function can only have 100 boosting iterations at most. 
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 ## C5.0
 cvCtrlNoProb <- cvCtrl
 cvCtrlNoProb$summaryFunction <- defaultSummary
@@ -232,6 +232,8 @@ apply(res, 2, mean)
 In terms of the method comparison, the cross-validation might be a better way compared to repeated sampling. My next step would be to use an external cross-validation to validate all the instances.
 
 <br>
+
+***
 
 # Reference
 
