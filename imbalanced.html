@@ -423,6 +423,7 @@ div.tocify {
 <p>Let us use an example to address the class imbalance. The analyzed dataset was a 1994 German credit dataset from the research of Dr. Hans Hofmann from the UCI Machine Learning repository. This dataset consisted of 1000 observations and 20 attributes without any missing values. The response is a binary variable which describes each customer as good or bad.</p>
 <pre class="r"><code>library(caret)
 library(pROC)
+library(ROCR)
 library(C50)
 library(DMwR)
 ## Read data
@@ -515,12 +516,13 @@ smoteCM$table</code></pre>
 <p>For the thresholding method, I will use the baseline model to predict the evaluation set and find the best threshold that is closest to the perfect model (specificity = sensitivity =1). Then I will relabel the predicted class from the baseline model using the new threshold.</p>
 <pre class="r"><code>## Thresholding
 evalResults &lt;- data.frame(score = evaluation$score)
-evalResults$RF &lt;- predict(rfFit, newdata = evaluation, type = &quot;prob&quot;)[,1]
-
-rfROC &lt;- roc(evalResults$score, evalResults$RF,
-               levels = rev(levels(evalResults$score)))
+evalResults$RF &lt;- predict(rfFit,
+                          newdata = evaluation,
+                          type = &quot;prob&quot;)[,1]
 # best threshold
-rfThresh &lt;- coords(rfROC, x = &quot;best&quot;, best.method = &quot;closest.topleft&quot;)  
+pred &lt;- prediction(evalResults$RF, evalResults$score)
+cost.perf &lt;- performance(pred, &quot;cost&quot;, cost.fp = 7, cost.fn = 3)
+rfThresh &lt;- pred@cutoffs[[1]][which.min(cost.perf@y.values[[1]])]
 # predict the test set using the new threshold
 threPred &lt;- factor(ifelse(baseProb &gt; rfThresh[1],
                           &quot;good&quot;, &quot;bad&quot;),
@@ -529,8 +531,8 @@ threCM &lt;- confusionMatrix(threPred, test$score)
 threCM$table</code></pre>
 <pre><code>##           Reference
 ## Prediction good bad
-##       good   92  12
-##       bad    48  48</code></pre>
+##       good   91  12
+##       bad    49  48</code></pre>
 </div>
 <div id="direct-methods-1" class="section level2">
 <h2>4. Direct methods</h2>

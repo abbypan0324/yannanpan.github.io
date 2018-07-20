@@ -67,9 +67,15 @@ test_cost = function(i){
                               newdata = evaluation,
                               type = "prob")[,1]
     
-    rfROC <- roc(evalResults$score, evalResults$RF,
-                 levels = rev(levels(evalResults$score)))
-    rfThresh <- coords(rfROC, x = "best", best.method = "closest.topleft") # best threshold 
+    ## 1) Use AUC-ROC to determine the best threshold
+    # rfROC <- roc(evalResults$score, evalResults$RF,
+    #              levels = rev(levels(evalResults$score)))
+    # rfThresh <- coords(rfROC, x = "best", best.method = "closest.topleft") # best threshold 
+    
+    ## 2) Use cost to determine the best threshold
+    pred <- prediction(evalResults$RF, evalResults$score)
+    cost.perf <- performance(pred, "cost", cost.fp = 7, cost.fn = 3)
+    rfThresh <- pred@cutoffs[[1]][which.min(cost.perf@y.values[[1]])]
     
     threPred <- factor(ifelse(baseProb > rfThresh[1],
                               "good", "bad"),

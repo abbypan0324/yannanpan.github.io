@@ -91,6 +91,7 @@ Let us use an example to address the class imbalance. The analyzed dataset was a
 ```{r, message=FALSE, warning=FALSE}
 library(caret)
 library(pROC)
+library(ROCR)
 library(C50)
 library(DMwR)
 ## Read data
@@ -190,12 +191,13 @@ For the thresholding method, I will use the baseline model to predict the evalua
 ```{r, message=FALSE, warning=FALSE}
 ## Thresholding
 evalResults <- data.frame(score = evaluation$score)
-evalResults$RF <- predict(rfFit, newdata = evaluation, type = "prob")[,1]
-
-rfROC <- roc(evalResults$score, evalResults$RF,
-               levels = rev(levels(evalResults$score)))
+evalResults$RF <- predict(rfFit,
+                          newdata = evaluation,
+                          type = "prob")[,1]
 # best threshold
-rfThresh <- coords(rfROC, x = "best", best.method = "closest.topleft")  
+pred <- prediction(evalResults$RF, evalResults$score)
+cost.perf <- performance(pred, "cost", cost.fp = 7, cost.fn = 3)
+rfThresh <- pred@cutoffs[[1]][which.min(cost.perf@y.values[[1]])]
 # predict the test set using the new threshold
 threPred <- factor(ifelse(baseProb > rfThresh[1],
                           "good", "bad"),

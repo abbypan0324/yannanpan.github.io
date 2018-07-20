@@ -14,3 +14,5 @@ htmltools
 stringr
 text2vec
 rpart
+gplots
+ROCR
