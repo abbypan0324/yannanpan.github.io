@@ -1,4 +1,4 @@
-all_packages = c("caret","pROC","C50","DMwR")
+all_packages = c("caret","pROC","C50","DMwR","ROCR")
 sapply(all_packages, require, character.only=TRUE)
 
 ## Training-validation-test split
@@ -70,14 +70,17 @@ test_cost = function(i){
     ## 1) Use AUC-ROC to determine the best threshold
     # rfROC <- roc(evalResults$score, evalResults$RF,
     #              levels = rev(levels(evalResults$score)))
-    # rfThresh <- coords(rfROC, x = "best", best.method = "closest.topleft") # best threshold 
+    # rfThresh <- coords(rfROC, x = "best", best.method = "closest.topleft") # best threshold
+    # threPred <- factor(ifelse(baseProb > rfThresh[1],
+    #                           "good", "bad"),
+    #                    levels = levels(evalResults$score))
     
     ## 2) Use cost to determine the best threshold
     pred <- prediction(evalResults$RF, evalResults$score)
     cost.perf <- performance(pred, "cost", cost.fp = 7, cost.fn = 3)
     rfThresh <- pred@cutoffs[[1]][which.min(cost.perf@y.values[[1]])]
     
-    threPred <- factor(ifelse(baseProb > rfThresh[1],
+    threPred <- factor(ifelse(baseProb > rfThresh,
                               "good", "bad"),
                        levels = levels(evalResults$score))
     threCM <- confusionMatrix(threPred, test$score)

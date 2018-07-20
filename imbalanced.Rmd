@@ -199,7 +199,7 @@ pred <- prediction(evalResults$RF, evalResults$score)
 cost.perf <- performance(pred, "cost", cost.fp = 7, cost.fn = 3)
 rfThresh <- pred@cutoffs[[1]][which.min(cost.perf@y.values[[1]])]
 # predict the test set using the new threshold
-threPred <- factor(ifelse(baseProb > rfThresh[1],
+threPred <- factor(ifelse(baseProb > rfThresh,
                           "good", "bad"),
                    levels = levels(evalResults$score))
 threCM <- confusionMatrix(threPred, test$score)
