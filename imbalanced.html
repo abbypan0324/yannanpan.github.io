@@ -441,6 +441,13 @@ cost_mat</code></pre>
 <pre><code>##      good bad
 ## good    0   7
 ## bad     3   0</code></pre>
+<p>Define a custom metric to evaluate the performance of models during tuning and testing.</p>
+<pre class="r"><code>custom_cost &lt;- function(data, lev = NULL, model = NULL) {
+  cm &lt;- confusionMatrix(data$pred, data$obs)
+  out &lt;- sum(cm$table*cost_mat)
+  names(out) &lt;- &quot;cost&quot;
+  out
+}</code></pre>
 <p>For the thresholding approach, the threshold should be determined using a different set (evaluation set) other than the training set and the test set. Here, I split the whole dataset into three parts, training:evaluation:test = 7:1:2.</p>
 <pre class="r"><code>## Training-evaluation-test split
 set.seed(2426)
@@ -456,7 +463,7 @@ test = other[-eval_idx,]</code></pre>
 <p>First, let us define training parameters and train a random forest model to serve as the baseline.</p>
 <pre class="r"><code>## CV
 cvCtrl &lt;- trainControl(method = &quot;cv&quot;,
-                       summaryFunction = twoClassSummary,
+                       summaryFunction = custom_cost,
                        classProbs = TRUE)
 
 ## Baseline
@@ -466,7 +473,7 @@ rfFit &lt;- train(score ~., data = training,
                  trControl = cvCtrl,
                  ntree = 1000,
                  tuneLength = 10,
-                 metric = &quot;ROC&quot;)
+                 metric = &quot;cost&quot;)
 
 baseProb &lt;- predict(rfFit, newdata = test, type = &quot;prob&quot;)[,1]
 basePred &lt;- predict(rfFit, newdata = test)
@@ -474,8 +481,8 @@ baseCM &lt;- confusionMatrix(basePred, test$score)
 baseCM$table</code></pre>
 <pre><code>##           Reference
 ## Prediction good bad
-##       good  127  36
-##       bad    13  24</code></pre>
+##       good  140  53
+##       bad     0   7</code></pre>
 </div>
 <div id="sampling" class="section level2">
 <h2>2. Sampling</h2>
@@ -493,15 +500,15 @@ smoteFit &lt;- train(score ~., data = smoteTrain,
                   trControl = cvCtrl,
                   ntree = 1000,
                   tuneLength = 10,
-                  metric = &quot;ROC&quot;)
+                  metric = &quot;cost&quot;)
 
 smotePred &lt;- predict(smoteFit, newdata = test)
 smoteCM &lt;- confusionMatrix(smotePred, test$score)
 smoteCM$table</code></pre>
 <pre><code>##           Reference
 ## Prediction good bad
-##       good  103  24
-##       bad    37  36</code></pre>
+##       good  122  39
+##       bad    18  21</code></pre>
 </div>
 <div id="thresholding" class="section level2">
 <h2>3. Thresholding</h2>
@@ -522,8 +529,8 @@ threCM &lt;- confusionMatrix(threPred, test$score)
 threCM$table</code></pre>
 <pre><code>##           Reference
 ## Prediction good bad
-##       good   95  15
-##       bad    45  45</code></pre>
+##       good   92  12
+##       bad    48  48</code></pre>
 </div>
 <div id="direct-methods-1" class="section level2">
 <h2>4. Direct methods</h2>
@@ -558,7 +565,7 @@ c5CM$table</code></pre>
 res = test_cost_repeat(10)
 apply(res, 2, mean)</code></pre>
 <pre><code>##     Baseline        SMOTE thresholding         C5.0 
-##        300.9        276.6        264.5        303.9</code></pre>
+##        388.5        297.5        264.7        306.9</code></pre>
 </div>
 <div id="next-steps" class="section level2">
 <h2>6. Next steps</h2>

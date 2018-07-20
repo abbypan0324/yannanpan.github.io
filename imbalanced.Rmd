@@ -109,6 +109,18 @@ rownames(cost_mat) <- colnames(cost_mat) <- levels(german$score)
 cost_mat
 ```
 
+Define a custom metric to evaluate the performance of models during tuning and testing.  
+
+```{r, message=FALSE, warning=FALSE}
+custom_cost <- function(data, lev = NULL, model = NULL) {
+  cm <- confusionMatrix(data$pred, data$obs)
+  out <- sum(cm$table*cost_mat)
+  names(out) <- "cost"
+  out
+}
+```
+
+
 For the thresholding approach, the threshold should be determined using a different set (evaluation set) other than the training set and the test set. Here, I split the whole dataset into three parts, training:evaluation:test = 7:1:2.
 
 ```{r, message=FALSE, warning=FALSE}
@@ -130,7 +142,7 @@ First, let us define training parameters and train a random forest model to serv
 ```{r, message=FALSE, warning=FALSE}
 ## CV
 cvCtrl <- trainControl(method = "cv",
-                       summaryFunction = twoClassSummary,
+                       summaryFunction = custom_cost,
                        classProbs = TRUE)
 
 ## Baseline
@@ -140,7 +152,7 @@ rfFit <- train(score ~., data = training,
                  trControl = cvCtrl,
                  ntree = 1000,
                  tuneLength = 10,
-                 metric = "ROC")
+                 metric = "cost")
 
 baseProb <- predict(rfFit, newdata = test, type = "prob")[,1]
 basePred <- predict(rfFit, newdata = test)
@@ -164,7 +176,7 @@ smoteFit <- train(score ~., data = smoteTrain,
                   trControl = cvCtrl,
                   ntree = 1000,
                   tuneLength = 10,
-                  metric = "ROC")
+                  metric = "cost")
 
 smotePred <- predict(smoteFit, newdata = test)
 smoteCM <- confusionMatrix(smotePred, test$score)

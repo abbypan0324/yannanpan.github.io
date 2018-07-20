@@ -12,7 +12,13 @@ test_cost = function(i){
     ## Cost matrix
     cost_mat <- matrix(c(0, 3, 7, 0), nrow = 2)
     rownames(cost_mat) <- colnames(cost_mat) <- levels(german$score)
-    cost_mat
+    
+    custom_cost <- function(data, lev = NULL, model = NULL) {
+        cm <- confusionMatrix(data$pred, data$obs)
+        out <- sum(cm$table*cost_mat)
+        names(out) <- "cost"
+        out
+    }
     
     set.seed(2426+i)
     train_idx = createDataPartition(german$score, p=0.7)[[1]]
@@ -26,7 +32,7 @@ test_cost = function(i){
     ## CV
     cvCtrl <- trainControl(method = "cv",
                            number = 5,
-                           summaryFunction = twoClassSummary,
+                           summaryFunction = custom_cost,
                            classProbs = TRUE)
     
     ## Baseline
@@ -35,7 +41,7 @@ test_cost = function(i){
                    trControl = cvCtrl,
                    ntree = 500,
                    tuneLength = 5,
-                   metric = "ROC")
+                   metric = "cost")
     
     baseProb <- predict(rfFit, newdata = test, type = "prob")[,1]
     basePred <- predict(rfFit, newdata = test)
@@ -104,7 +110,7 @@ test_cost_repeat = function(n){
     
     res = foreach(i = 1:n,
                   .combine = rbind,
-                  .export = "test_cost",
+                  .export = c("test_cost","custom_cost"),
                   .packages = all_packages) %dopar%
                   {test_cost(i)}
     stopCluster(cl)
